@@ -1,6 +1,7 @@
-FROM --platform=amd64 tinygo/tinygo-dev:latest@sha256:be8a85a6f6454240d9ed1bb8f504717020abfe54e96be95b94ec4f00655d6ef1
+FROM --platform=amd64 docker.io/tinygo/tinygo:latest@sha256:79c73c4246a1079e648d6e8425bae4654f26d2baed24c96537a8893b41c04d26
 
 # install jq
+USER root
 RUN apt-get update && apt-get install -y jq && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 RUN echo 'eval "$(tinygo-autocmpl --completion-script-bash)"' >> ~/.bashrc
