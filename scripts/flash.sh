@@ -10,9 +10,8 @@ fi
 
 # get target name
 envid=$1
-target_name=$1
+target_name=$2
 
 gitpod env ssh-config
-gitpod env ssh "$envid" ./scripts/build.sh "$target_name"
-
+ssh "$envid".gitpod.environment ./scripts/build.sh "$target_name"
 scp "$envid".gitpod.environment:$target_name.uf2 /Volumes/RPI-RP2
