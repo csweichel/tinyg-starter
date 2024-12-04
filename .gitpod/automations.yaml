@@ -1,0 +1,32 @@
+tasks:
+  installTools:
+    name: Install Go tools
+    description: Install basic Go tools
+    triggeredBy: [postDevcontainerStart]
+    command: |  
+      go install golang.org/x/tools/gopls@latest
+      go install golang.org/x/tools/cmd/goimports@latest
+      go install github.com/sago35/tinygo-autocmpl@latest
+  updateGoRoot:
+    name: Update Go root
+    description: Update Go root for VS Code
+    triggeredBy: [postDevcontainerStart]
+    command: |
+      jq '."go.toolsEnvVars".GOROOT = '"$(tinygo info -json | jq .goroot)" .vscode/settings_template.json > .vscode/settings.json
+  newTarget:
+    name: Create new target
+    description: Create new target/program called new_target
+    triggeredBy: [manual]
+    command: |
+      scripts/add-target.sh new_target
+      echo "New target created at cmd/new_target - feel free to rename the target/directory and add your own code"
+  refreshBuildTargets:
+    name: Refresh build targets
+    description: Refresh build targets
+    triggeredBy: [manual, postDevcontainerStart]
+    command: |
+      for d in cmd/*; do
+        if [ -d "$d" ]; then
+          echo '{"tasks": {"buildTarget'"$(basename $d)"'": {"name": "Build '"$(basename $d)"'", "command": "./scripts/build.sh '"$(basename $d)"'", "triggeredBy": ["manual", "postDevcontainerStart"]}}}' | gitpod auto update -
+        fi
+      done
